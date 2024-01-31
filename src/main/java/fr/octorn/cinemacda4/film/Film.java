@@ -1,7 +1,6 @@
 package fr.octorn.cinemacda4.film;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import fr.octorn.cinemacda4.acteur.Acteur;
 import fr.octorn.cinemacda4.realisateur.Realisateur;
@@ -40,11 +39,11 @@ public class Film {
     @Column(length = 500)
     private String synopsis;
 
-    @ManyToOne(cascade = CascadeType.ALL) // One Realisateur to Many Film
+    @ManyToOne // One Realisateur to Many Film
     @JoinColumn(name = "realisateur_id")
     private Realisateur realisateur;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany
     @JoinTable(
             name = "acteur_film",
             joinColumns = @JoinColumn(name = "film_id"),

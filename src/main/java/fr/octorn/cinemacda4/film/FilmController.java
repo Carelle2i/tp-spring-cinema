@@ -1,5 +1,8 @@
 package fr.octorn.cinemacda4.film;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.octorn.cinemacda4.film.dto.FilmCompletDto;
+import fr.octorn.cinemacda4.film.dto.FilmReduitDto;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,13 +12,21 @@ import java.util.List;
 public class FilmController {
     private final FilmService filmService;
 
-    public FilmController(FilmService filmService) {
+    private final ObjectMapper objectMapper;
+
+    public FilmController(
+            FilmService filmService,
+            ObjectMapper objectMapper
+    ) {
         this.filmService = filmService;
+        this.objectMapper = objectMapper;
     }
 
     @GetMapping
-    public List<Film> findAll() {
-        return filmService.findAll();
+    public List<FilmReduitDto> findAll() {
+        return filmService.findAll().stream().map(
+                film -> objectMapper.convertValue(film, FilmReduitDto.class)
+        ).toList();
     }
 
     @PostMapping
@@ -24,8 +35,9 @@ public class FilmController {
     }
 
     @GetMapping("/{id}") // /films/1
-    public Film findById(@PathVariable Integer id) {
-        return filmService.findById(id);
+    public FilmCompletDto findById(@PathVariable Integer id) {
+        Film film = filmService.findById(id);
+        return objectMapper.convertValue(film, FilmCompletDto.class);
     }
 
     @DeleteMapping("/{id}")

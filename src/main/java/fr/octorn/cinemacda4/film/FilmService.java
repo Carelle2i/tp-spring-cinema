@@ -51,4 +51,12 @@ public class FilmService {
                         )
                 );
     }
+
+    public List<Film> findAllByRealisateurId(Integer id) {
+        return filmRepository.findAllByRealisateurId(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Aucun film ayant ce réalisateur"
+                ));
+    }
 }
