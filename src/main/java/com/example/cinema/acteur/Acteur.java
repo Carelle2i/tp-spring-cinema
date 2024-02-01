@@ -1,5 +1,6 @@
 package com.example.cinema.acteur;
 
+import com.example.cinema.film.Film;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
@@ -24,9 +25,8 @@ public class Acteur {
     private String prenom;
 
     @ManyToMany(
-            mappedBy = "acteur",
-            cascade = CascadeType.PERSIST
+            mappedBy = "acteurs"
     )
-    private List<Acteur> films= new ArrayList<>();
+    private List<Film> films= new ArrayList<>();
 
 }

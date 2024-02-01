@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ListeActeurDto {
+public class ActeurReduitDto {
     private List<ActeurSansFilmDto> acteurs;
 
 }

@@ -1,7 +1,7 @@
 package com.example.cinema.realisateur.dto;
 
 
-import com.example.cinema.acteur.dto.ActeurSansFilmDto;
+import com.example.cinema.film.dto.FilmReduitDto;
 import lombok.Data;
 
 
@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class RealisateurDto {
+public class RealisateurAvecFilmDto {
     private Long id;
     private String nom;
     private String prenom;
 
-    private List<ActeurSansFilmDto> acteurs = new ArrayList<>();
+    private List<FilmReduitDto> film = new ArrayList<>();
 }

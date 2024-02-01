@@ -1,6 +1,6 @@
 package com.example.cinema.acteur;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -29,11 +29,10 @@ public class ActeurService {
     public Acteur findById(Integer id) {
         return acteurRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(
-                        org.springframework.http.HttpStatus.NOT_FOUND, "Cet acteur n'est pas dans la base de donnée."
+                        HttpStatus.NOT_FOUND, "Cet acteur n'est pas dans la base de donnée."
                 )
         );
     }
-
     public Acteur update(Acteur acteur) {
 
         return acteurRepository.save(acteur);
@@ -43,4 +42,5 @@ public class ActeurService {
         Acteur acteur = this.findById(id);
         acteurRepository.delete(acteur);
     }
+
 }

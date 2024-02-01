@@ -1,7 +1,8 @@
-package com.example.cinema.film.films;
+package com.example.cinema.film.dto;
 
 
 import com.example.cinema.acteur.dto.ActeurSansFilmDto;
+import com.example.cinema.realisateur.dto.RealisateurAvecFilmDto;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -20,7 +21,9 @@ public class FilmCompletDto {
 
     private String synopsis;
 
-    private RealisateurDto realisateur;
+    private RealisateurAvecFilmDto realisateur;
 
     private List<ActeurSansFilmDto> acteurs = new ArrayList<>();
+
+    private RealisateurAvecFilmDto realisateurs;
 }

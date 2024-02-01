@@ -1,6 +1,9 @@
 package com.example.cinema.realisateur;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.cinema.film.Film;
+import com.example.cinema.film.FilmService;
+import com.example.cinema.film.dto.FilmReduitDto;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -9,9 +12,14 @@ import java.util.List;
 @Service
 public class RealisateurService {
     private final RealisateurRepository realisateurRepository;
-
-    public RealisateurService(RealisateurRepository realisateurRepository) {
+    private final FilmService filmService;
+    public RealisateurService(RealisateurRepository realisateurRepository, FilmService filmService) {
         this.realisateurRepository = realisateurRepository;
+        this.filmService = filmService;
+    }
+
+    public List<FilmReduitDto> getFilmsByRealisateurId(Long realisateurId) {
+        return filmService.findAllFilmsByRealisateurId(realisateurId, realisateurId);
     }
 
     public List<Realisateur> findAll() {
@@ -27,7 +35,7 @@ public class RealisateurService {
     public Realisateur findById(Integer id) {
         return realisateurRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(
-                        org.springframework.http.HttpStatus.NOT_FOUND, "Ce réalisateur n'est pas dans la base de donnée."
+                        HttpStatus.NOT_FOUND, "Ce réalisateur n'est pas dans la base de donnée."
                 )
         );
     }
@@ -38,7 +46,12 @@ public class RealisateurService {
     }
 
     public void deleteById(Integer id) {
-        Realisateur realisateur = this.findById(id);
-        realisateurRepository.delete(realisateur);
+        this.findById(id);
+
+
+
+        realisateurRepository.deleteById(id);
     }
+
+
 }

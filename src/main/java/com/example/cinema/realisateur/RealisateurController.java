@@ -1,6 +1,11 @@
 package com.example.cinema.realisateur;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
+import com.example.cinema.film.dto.FilmReduitDto;
+import com.example.cinema.realisateur.dto.RealisateurReduitDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,24 +15,37 @@ import java.util.List;
 public class RealisateurController {
     private final RealisateurService realisateurService;
 
-    @Autowired
-    public RealisateurController(RealisateurService realisateurService) {
+    private final ObjectMapper objectMapper;
+
+    public RealisateurController(RealisateurService realisateurService,
+                          ObjectMapper objectMapper) {
         this.realisateurService = realisateurService;
+        this.objectMapper = objectMapper;
     }
 
     @GetMapping
-    public List<Realisateur> findAll() {
-        return realisateurService.findAll();
+    public List<RealisateurReduitDto> findAll() {
+        return realisateurService.findAll().stream().map(
+                realisateur -> objectMapper.convertValue(realisateur, RealisateurReduitDto.class)
+        ).toList();
     }
 
-    @GetMapping("/{id}")
-    public Realisateur findById(@PathVariable Integer id) {
-        return realisateurService.findById(id);
-    }
 
     @PostMapping
     public Realisateur save(@RequestBody Realisateur realisateur) {
         return realisateurService.save(realisateur);
+    }
+
+    @GetMapping("/{id}")
+    public RealisateurReduitDto findById(@PathVariable int id) {
+        Realisateur realisateur = realisateurService.findById(id);
+        return objectMapper.convertValue(realisateur, RealisateurReduitDto.class);
+    }
+
+    @GetMapping("/{id}/films")
+    public ResponseEntity<List<FilmReduitDto>> getFilmsByRealisateurId(@PathVariable Long id) {
+        List<FilmReduitDto> films = realisateurService.getFilmsByRealisateurId(id);
+        return new ResponseEntity<>(films, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

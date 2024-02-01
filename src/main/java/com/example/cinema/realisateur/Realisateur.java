@@ -9,7 +9,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name= "realisateur")
 public class Realisateur {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
