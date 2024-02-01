@@ -14,4 +14,5 @@ public interface FilmRepository extends JpaRepository<Film, Integer> {
 
     // SELECT * FROM film WHERE realisateur_id IS ...
     Optional<List<Film>> findAllByRealisateurId(Integer id);
+
 }

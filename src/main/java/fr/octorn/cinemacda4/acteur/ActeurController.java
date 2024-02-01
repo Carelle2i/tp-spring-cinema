@@ -31,12 +31,15 @@ public class ActeurController {
 
     @GetMapping("/{id}")
     public ActeurReduitDto findById(@PathVariable Integer id) {
+
         Acteur acteur = acteurService.findById(id);
+
         ActeurReduitDto acteurReduitDto = new ActeurReduitDto();
 
         acteurReduitDto.setId(acteur.getId());
         acteurReduitDto.setNom(acteur.getNom());
         acteurReduitDto.setPrenom(acteur.getPrenom());
+
         acteurReduitDto.setFilms(
                 acteur.getFilms().stream().map(
                         film -> objectMapper.convertValue(film, FilmSansActeurDto.class)

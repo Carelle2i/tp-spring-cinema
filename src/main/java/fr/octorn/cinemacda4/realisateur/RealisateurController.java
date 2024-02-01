@@ -1,5 +1,6 @@
 package fr.octorn.cinemacda4.realisateur;
 
+import fr.octorn.cinemacda4.realisateur.dto.RealisateurAvecFilmsDto;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +20,8 @@ public class RealisateurController {
     }
 
     @GetMapping("/{id}")
-    public Realisateur findById(@PathVariable int id) {
-        return realisateurService.findById(id);
+    public RealisateurAvecFilmsDto findById(@PathVariable int id) {
+        return realisateurService.findRealisateurWithFilm(id);
     }
 
     @DeleteMapping("/{id}")

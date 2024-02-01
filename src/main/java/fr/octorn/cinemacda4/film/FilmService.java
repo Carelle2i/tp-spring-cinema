@@ -1,5 +1,6 @@
 package fr.octorn.cinemacda4.film;
 
+import fr.octorn.cinemacda4.acteur.Acteur;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -58,5 +59,10 @@ public class FilmService {
                         HttpStatus.NOT_FOUND,
                         "Aucun film ayant ce réalisateur"
                 ));
+    }
+
+    public List<Acteur> findActeursByFilm(Integer id) {
+        Film film = this.findById(id);
+        return film.getActeurs();
     }
 }
