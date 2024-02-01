@@ -5,6 +5,7 @@ import fr.octorn.cinemacda4.film.Film;
 import fr.octorn.cinemacda4.film.FilmRepository;
 import fr.octorn.cinemacda4.film.FilmService;
 import fr.octorn.cinemacda4.film.dto.FilmMiniDto;
+import fr.octorn.cinemacda4.film.dto.FilmSansActeursNiRealisateurDto;
 import fr.octorn.cinemacda4.realisateur.dto.RealisateurAvecFilmsDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -88,5 +89,9 @@ public class RealisateurService {
 
         // Puis on retourne l'objet qu'on a fabriqué
         return realisateurAvecFilmsDto;
+    }
+
+    public List<Film> findFilmsByRealisateurId(Integer id) {
+        return filmService.findAllByRealisateurId(id);
     }
 }

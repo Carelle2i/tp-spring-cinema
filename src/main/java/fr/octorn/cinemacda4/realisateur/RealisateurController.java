@@ -1,5 +1,8 @@
 package fr.octorn.cinemacda4.realisateur;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.octorn.cinemacda4.film.Film;
+import fr.octorn.cinemacda4.film.dto.FilmSansActeursNiRealisateurDto;
 import fr.octorn.cinemacda4.realisateur.dto.RealisateurAvecFilmsDto;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,8 +13,11 @@ import java.util.List;
 public class RealisateurController {
     private final RealisateurService realisateurService;
 
-    public RealisateurController(RealisateurService realisateurService) {
+    private final ObjectMapper objectMapper;
+
+    public RealisateurController(RealisateurService realisateurService, ObjectMapper objectMapper) {
         this.realisateurService = realisateurService;
+        this.objectMapper = objectMapper;
     }
 
     @GetMapping
@@ -37,6 +43,15 @@ public class RealisateurController {
     @PutMapping
     public Realisateur update(@RequestBody Realisateur realisateur) {
         return realisateurService.save(realisateur);
+    }
+
+    @GetMapping("/{id}/films")
+    public List<FilmSansActeursNiRealisateurDto> findFilmsByRealisateurId(@PathVariable Integer id) {
+        List<Film> filmsDuRealisateur = realisateurService.findFilmsByRealisateurId(id);
+
+        return filmsDuRealisateur.stream().map(
+                film -> objectMapper.convertValue(film, FilmSansActeursNiRealisateurDto.class)
+        ).toList();
     }
 
 }
