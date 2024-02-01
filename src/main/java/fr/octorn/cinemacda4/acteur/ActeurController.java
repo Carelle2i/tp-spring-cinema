@@ -1,6 +1,9 @@
 package fr.octorn.cinemacda4.acteur;
 
-import org.springframework.data.domain.Sort;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.octorn.cinemacda4.acteur.dto.ActeurReduitDto;
+import fr.octorn.cinemacda4.acteur.dto.ActeurSansFilmDto;
+import fr.octorn.cinemacda4.film.dto.FilmSansActeurDto;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,9 +13,15 @@ import java.util.List;
 public class ActeurController {
     private final ActeurService acteurService;
 
+    private final ObjectMapper objectMapper;
 
-    public ActeurController(ActeurService acteurService) {
+
+    public ActeurController(
+            ActeurService acteurService,
+            ObjectMapper objectMapper
+    ) {
         this.acteurService = acteurService;
+        this.objectMapper = objectMapper;
     }
 
     @PostMapping
@@ -21,8 +30,20 @@ public class ActeurController {
     }
 
     @GetMapping("/{id}")
-    public Acteur findById(@PathVariable Integer id) {
-        return acteurService.findById(id);
+    public ActeurReduitDto findById(@PathVariable Integer id) {
+        Acteur acteur = acteurService.findById(id);
+        ActeurReduitDto acteurReduitDto = new ActeurReduitDto();
+
+        acteurReduitDto.setId(acteur.getId());
+        acteurReduitDto.setNom(acteur.getNom());
+        acteurReduitDto.setPrenom(acteur.getPrenom());
+        acteurReduitDto.setFilms(
+                acteur.getFilms().stream().map(
+                        film -> objectMapper.convertValue(film, FilmSansActeurDto.class)
+                ).toList()
+        );
+
+        return acteurReduitDto;
     }
 
     @DeleteMapping("/{id}")
@@ -31,7 +52,12 @@ public class ActeurController {
     }
 
     @GetMapping
-    public List<Acteur> findAll() {
-        return acteurService.findAll();
+    public List<ActeurSansFilmDto> findAll() {
+
+        List<Acteur> acteurs = acteurService.findAll();
+
+        return acteurs.stream().map(
+                acteur -> objectMapper.convertValue(acteur, ActeurSansFilmDto.class)
+        ).toList();
     }
 }
