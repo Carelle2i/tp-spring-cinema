@@ -2,12 +2,14 @@ package fr.octorn.cinemacda4.film;
 
 import fr.octorn.cinemacda4.acteur.Acteur;
 import fr.octorn.cinemacda4.acteur.ActeurService;
+import fr.octorn.cinemacda4.film.exceptions.BadRequestException;
+import fr.octorn.cinemacda4.film.exceptions.FilmNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class FilmService {
@@ -24,17 +26,36 @@ public class FilmService {
         return filmRepository.findAll();
     }
 
-    public Film save(Film film) {
+    public Film save(Film film) throws BadRequestException {
+        verifyFilm(film);
+
         return filmRepository.save(film);
+    }
+
+    private static void verifyFilm(Film film) {
+        List<String> erreurs = new ArrayList<>();
+
+        if (film.getTitre() == null) {
+            erreurs.add("Le titre est obligatoire");
+        }
+
+        if (film.getDateSortie() == null) {
+            erreurs.add("La date de sortie est obligatoire");
+        }
+
+        if (film.getRealisateur() == null) {
+            erreurs.add("Le réalisateur est obligatoire");
+        }
+
+        if (!erreurs.isEmpty()) {
+            throw new BadRequestException(erreurs);
+        }
     }
 
     public Film findById(Integer id) {
         return filmRepository.findById(id)
                 .orElseThrow(
-                        () -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Film Non trouvé"
-                        )
+                        () -> new FilmNotFoundException(id)
                 );
     }
 

@@ -6,7 +6,9 @@ import fr.octorn.cinemacda4.acteur.dto.ActeurReduitDto;
 import fr.octorn.cinemacda4.acteur.dto.ActeurSansFilmDto;
 import fr.octorn.cinemacda4.film.dto.FilmCompletDto;
 import fr.octorn.cinemacda4.film.dto.FilmReduitDto;
+import fr.octorn.cinemacda4.film.exceptions.BadRequestException;
 import fr.octorn.cinemacda4.realisateur.Realisateur;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +36,9 @@ public class FilmController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Film save(@RequestBody Film film) {
+
         return filmService.save(film);
     }
 
