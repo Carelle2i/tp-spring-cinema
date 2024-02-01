@@ -1,6 +1,7 @@
 package fr.octorn.cinemacda4.film;
 
 import fr.octorn.cinemacda4.acteur.Acteur;
+import fr.octorn.cinemacda4.acteur.ActeurService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -12,8 +13,11 @@ import java.util.Optional;
 public class FilmService {
     private final FilmRepository filmRepository;
 
-    public FilmService(FilmRepository filmRepository) {
+    private final ActeurService acteurService;
+
+    public FilmService(FilmRepository filmRepository, ActeurService acteurService) {
         this.filmRepository = filmRepository;
+        this.acteurService = acteurService;
     }
 
     public List<Film> findAll() {
@@ -64,5 +68,16 @@ public class FilmService {
     public List<Acteur> findActeursByFilm(Integer id) {
         Film film = this.findById(id);
         return film.getActeurs();
+    }
+
+
+    public Film addActorToFilm(Integer id, Acteur acteur) {
+
+        Film film = this.findById(id);
+        acteur = acteurService.findById(acteur.getId());
+
+        film.getActeurs().add(acteur);
+
+        return this.save(film);
     }
 }

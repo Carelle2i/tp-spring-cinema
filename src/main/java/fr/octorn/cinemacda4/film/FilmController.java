@@ -86,4 +86,27 @@ public class FilmController {
     public Realisateur findRealisateursByFilm(@PathVariable Integer id) {
         return filmService.findById(id).getRealisateur();
     }
+
+    @PostMapping("/{id}/acteurs")
+    public FilmCompletDto addActorToFilm(@PathVariable Integer id, @RequestBody Acteur acteur) {
+        Film film = filmService.addActorToFilm(id, acteur);
+
+        FilmCompletDto filmCompletDto = new FilmCompletDto();
+        filmCompletDto.setId(film.getId());
+        filmCompletDto.setDuree(film.getDuree());
+        filmCompletDto.setRealisateur(film.getRealisateur());
+        filmCompletDto.setDateSortie(film.getDateSortie());
+        filmCompletDto.setSynopsis(film.getSynopsis());
+        filmCompletDto.setActeurs(
+                film.getActeurs().stream().map(
+                        unmappedActor -> objectMapper.convertValue(
+                                unmappedActor,
+                                ActeurSansFilmDto.class
+
+                        )
+                ).toList()
+        );
+
+        return filmCompletDto;
+    }
 }
