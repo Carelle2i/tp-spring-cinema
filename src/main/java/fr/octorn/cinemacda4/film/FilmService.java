@@ -52,6 +52,10 @@ public class FilmService {
         }
     }
 
+    public boolean existsById(Integer id) {
+        return filmRepository.existsById(id);
+    }
+
     public Film findById(Integer id) {
         return filmRepository.findById(id)
                 .orElseThrow(
