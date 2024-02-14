@@ -1,8 +1,11 @@
 package fr.octorn.cinemacda4.salles;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
     @RestController
@@ -33,7 +36,11 @@ import java.util.List;
         public Salle updateSalle(@PathVariable Long id, @RequestBody Salle salle) {
             return salleService.update(Math.toIntExact(id), salle);
         }
-
+        @GetMapping("/disponible")
+        public ResponseEntity<List<Salle>> getAvailableSallesAtDate(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+            List<Salle> availableSalles = salleService.getAvailableSallesAtDate(date);
+            return ResponseEntity.ok(availableSalles);
+        }
         @DeleteMapping("/{id}")
         public void deleteById(@PathVariable Integer id) {
             salleService.deleteById(id);

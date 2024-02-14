@@ -1,16 +1,23 @@
 package fr.octorn.cinemacda4.salles;
 
 import fr.octorn.cinemacda4.salles.exception.SalleNotFoundException;
+import fr.octorn.cinemacda4.seances.Seance;
+import fr.octorn.cinemacda4.seances.SeanceRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
     public class SalleService {
         private final SalleRepository salleRepository;
+        private SeanceRepository seanceRepository;
+        private final SalleService salleService;
 
-    public SalleService(SalleRepository salleRepository, SalleService salleService) {
+    public SalleService(SalleRepository salleRepository, SalleService salleService, SalleService salleService1) {
             this.salleRepository = salleRepository;
+        this.salleService = salleService1;
     }
 
         public List<Salle> findAll() {
@@ -45,6 +52,17 @@ import java.util.List;
 
             salleRepository.deleteById(id);
         }
+    public List<Salle> getAvailableSallesAtDate(LocalDate date) {
+        List<Salle> allSalles = salleRepository.findAll();
+        List<Seance> seancesAtDate = seanceRepository.findByDate(date);
+
+
+        List<Salle> availableSalles = allSalles.stream()
+                .filter(salle -> seancesAtDate.stream().noneMatch(seance -> seance.getSalle().getId().equals(salle.getId())))
+                .collect(Collectors.toList());
+
+        return availableSalles;
+    }
     }
 
 

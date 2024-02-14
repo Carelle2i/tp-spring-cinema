@@ -1,26 +1,44 @@
 package fr.octorn.cinemacda4.seances;
 
 
+import fr.octorn.cinemacda4.film.Film;
+import fr.octorn.cinemacda4.film.FilmRepository;
 import fr.octorn.cinemacda4.film.FilmService;
+import fr.octorn.cinemacda4.film.exceptions.FilmNotFoundException;
 import fr.octorn.cinemacda4.salles.SalleRepository;
 import fr.octorn.cinemacda4.salles.SalleService;
+import fr.octorn.cinemacda4.seances.dto.SeanceDto;
+import fr.octorn.cinemacda4.seances.exception.SeanceNotFoundException;
 import fr.octorn.cinemacda4.seances.exception.SeanceValidationException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SeanceService {
-
-    private SeanceRepository seanceRepository;
+    private final SeanceService seanceService;
+    private final SeanceRepository seanceRepository;
 
     private SalleService salleService;
-
-    private FilmService filmService;
-
     private SalleRepository salleRepository;
+    private FilmService filmService;
+    private FilmRepository filmRepository;
 
+
+    public SeanceService(SeanceService seanceService, SeanceRepository seanceRepository) {
+        this.seanceService = seanceService;
+        this.seanceRepository = seanceRepository;
+    }
+
+    public Seance getSeanceById(Long seanceId) {
+        return seanceRepository.findById(seanceId)
+                .orElseThrow(() -> new SeanceNotFoundException("Seance not found with id: " + seanceId));
+    }
     public Seance createSeance(Seance seance) {
         // Vérifie que la salle et le film existent bien
         if (!salleService.existsById(Math.toIntExact(seance.getSalle().getId())) || !filmService.existsById(seance.getFilm().getId())) {
@@ -47,7 +65,38 @@ public class SeanceService {
         // Enregistre la séance
         return seanceRepository.save(seance);
     }
+    public void updateAvailablePlaces(Seance seance, int nbReservedPlaces) {
+        int availablePlaces = seance.getPlacesDisponibles() - nbReservedPlaces;
+        seance.setPlacesDisponibles(availablePlaces);
+        seanceRepository.save(seance);
+    }
+    public List<Seance> getSeancesByDate(LocalDate date) {
+        return seanceRepository.findByDate(date);
+    }
+    public List<SeanceDto> getAvailableSeancesForFilm(Long filmId) {
+        Film film = filmRepository.findById(Math.toIntExact(filmId))
+                .orElseThrow(() -> new FilmNotFoundException(Math.toIntExact(filmId)));
+
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Seance> availableSeances = seanceRepository.findByFilmAndDateAfterAndPlacesDisponiblesGreaterThan(film, now, 0);
+
+        return availableSeances.stream()
+                .map(this::mapToSeanceDto)
+                .collect(Collectors.toList());
+    }
+
+    private SeanceDto mapToSeanceDto(Seance seance) {
+        return new SeanceDto(seance.getId(), seance.getPrix(), seance.getDate(), seance.getPlacesDisponibles());
+    }
+    public List<Seance> getAvailableSeancesForFilmAndDate(Long filmId, LocalDate date) {
+
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+        return seanceRepository.findByFilmIdAndDateBetweenAndPlacesDisponiblesGreaterThan(filmId, startOfDay, endOfDay, 0);
+    }
 }
+
 
 
 

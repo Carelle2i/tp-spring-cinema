@@ -20,12 +20,12 @@ public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nomClient;
-    private int nbPlaces;
+
 
     @ManyToOne
     @JoinColumn(name = "seance_id", nullable = false)
     private Seance seance;
-
+    private String nomClient;
+    private int nbPlaces;
 }
 
